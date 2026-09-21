@@ -1,0 +1,189 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);
+  color: #e2e8f0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.card {
+  width: min(420px, 100%);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+.card h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
+}
+
+.hint {
+  margin: 0 0 1.25rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.login-form label {
+  display: block;
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.login-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0b1220;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.login-form input:focus {
+  outline: 2px solid #14b8a6;
+  border-color: transparent;
+}
+
+.error {
+  margin: 0.85rem 0 0;
+  color: #fda4af;
+  font-size: 0.9rem;
+}
+
+button {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #14b8a6;
+  color: #042f2e;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #2dd4bf;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.profile dl {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem 0.75rem;
+  margin: 1rem 0 0;
+}
+
+.profile dt {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.profile dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.banner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: rgba(20, 184, 166, 0.2);
+  border: 1px solid rgba(45, 212, 191, 0.5);
+  color: #99f6e4;
+  font-size: 0.9rem;
+  z-index: 10;
+  max-width: min(480px, 92vw);
+  text-align: center;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  margin: 1.5rem 0;
+}
+
+.change-password-form h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.change-password-form label {
+  display: block;
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.change-password-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0b1220;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.change-password-form input:focus {
+  outline: 2px solid #14b8a6;
+  border-color: transparent;
+}
+
+.profile button[data-testid='logout-button'] {
+  background: #64748b;
+  color: #f8fafc;
+}
+
+.profile button[data-testid='logout-button']:hover:not(:disabled) {
+  background: #94a3b8;
+  color: #0f172a;
+}
+
+.switch-auth {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+button.linkish {
+  margin: 0;
+  width: auto;
+  padding: 0;
+  background: transparent;
+  color: #5eead4;
+  font-weight: 600;
+  font-size: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+button.linkish:hover:not(:disabled) {
+  background: transparent;
+  color: #99f6e4;
+}

@@ -1,0 +1,27 @@
+# Backend (Maven)
+backend/target/
+*.class
+*.jar
+*.war
+hs_err_pid*
+replay_pid*
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/coverage/
+frontend/.env
+frontend/.env.*.local
+*.local
+
+# Logs / IDE
+*.log
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.swp
+.DS_Store

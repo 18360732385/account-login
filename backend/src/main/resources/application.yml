@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: account-login-java
+
+app:
+  jwt:
+    # 演示用密钥（生产请用环境变量覆盖）；HS256 至少 256 bit
+    secret: "account-login-java-demo-secret-key-32bytes!!"
+    expiration-ms: 3600000
+
+logging:
+  level:
+    org.springframework.security: INFO
