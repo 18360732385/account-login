@@ -10,7 +10,7 @@
 |---|---|
 | 鉴权 | 除 `POST /api/auth/login`、`POST /api/auth/register` 外均需 `Authorization: Bearer <accessToken>`（`SecurityConfig`） |
 | 成功响应 | **无统一外壳**：直接返回 DTO（`LoginResponse` / `MeResponse` / `MessageResponse`），HTTP 200 |
-| 错误响应 | `ErrorResponse { code, message }`；`ResponseStatusException` → `code` 为 `"<HTTP 状态> <原因短语>"`（如 `409 CONFLICT`）；Bean Validation 失败 → `code=BAD_REQUEST`；未认证 → HTTP 401 `code=UNAUTHORIZED`、`message=需要登录` |
+| 错误响应 | `ErrorResponse { code, message }`；`ResponseStatusException` → `code` 为 `"<HTTP 状态> <原因短语>"`（如 `409 CONFLICT`）；Bean Validation 失败 → `code=BAD_REQUEST`，并附 `fieldErrors: {字段: 文案}`（追加字段，`message` 仍为首个字段错误）；未认证 → HTTP 401 `code=UNAUTHORIZED`、`message=需要登录` |
 | Token 失效 | JWT 携带 `jti` 与 `tv`（tokenVersion）；登出/改密把 `jti` 写入内存 `TokenDenylist`；改密递增 `tokenVersion` 使旧 token 全部失效 |
 
 ## 变更记录
@@ -18,6 +18,7 @@
 | 版本 | 类型 | 内容 | 操作人 | 更新时间 |
 |---|---|---|---|---|
 | v0.1 | 创建 | harness-eng fill-truths-agents 精填 5 个接口（注册/登录/me/登出/改密），经 acceptance + fill-merge 合入 | 张健 | 2026-09-27 |
+| v0.2 | 修改 | 公共约定：校验失败错误体追加 `fieldErrors`（向后兼容；feature-eng 主题 2026-09-27-profile） | 张健 | 2026-09-27 |
 
 ---
 

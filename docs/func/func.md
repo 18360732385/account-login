@@ -22,7 +22,7 @@
 
 | 模块 | 真相路径 | 代码目录 | 说明 |
 |---|---|---|---|
-| 认证与账号（backend） | [`modules/01-account-login-backend.md`](./modules/01-account-login-backend.md) | `backend/src/main/java/com/example/accountlogin/` | AuthService / DemoUserStore / TokenDenylist / JwtService / DemoUser |
+| 认证与账号（backend） | [`modules/01-account-login-backend.md`](./modules/01-account-login-backend.md) | `backend/src/main/java/com/example/accountlogin/` | AuthService / UserProfileService / DemoUserStore / TokenDenylist / JwtService / DemoUser |
 
 ## 变更记录（索引级）
 
@@ -30,3 +30,4 @@
 |---|---|---|---|---|
 | v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | 2026-09-27 |
 | v0.2 | 修改 | 登记 01-account-login-backend 模块真相 | 张健 | 2026-09-27 |
+| v0.3 | 修改 | 01 模块说明补 UserProfileService（个人资料） | 张健 | 2026-09-27 |

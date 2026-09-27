@@ -3,6 +3,8 @@ package com.example.accountlogin.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,8 +25,9 @@ public class DemoUserStore {
 
     public DemoUserStore(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-        users.put("demo", new DemoUser("demo", passwordEncoder.encode("demo123"), "演示用户", 0));
-        users.put("admin", new DemoUser("admin", passwordEncoder.encode("admin123"), "管理员", 0));
+        Instant seededAt = Instant.now();
+        users.put("demo", new DemoUser("demo", passwordEncoder.encode("demo123"), "演示用户", 0, null, null, seededAt));
+        users.put("admin", new DemoUser("admin", passwordEncoder.encode("admin123"), "管理员", 0, null, null, seededAt));
     }
 
     public Optional<DemoUser> findByUsername(String username) {
@@ -39,10 +42,8 @@ public class DemoUserStore {
         if (current == null) {
             throw new IllegalArgumentException("用户不存在: " + username);
         }
-        DemoUser updated = new DemoUser(
-                current.username(),
+        DemoUser updated = current.withPassword(
                 passwordEncoder.encode(newRawPassword),
-                current.displayName(),
                 current.tokenVersion() + 1
         );
         users.put(username, updated);
@@ -55,12 +56,7 @@ public class DemoUserStore {
         if (current == null) {
             throw new IllegalArgumentException("用户不存在: " + username);
         }
-        users.put(username, new DemoUser(
-                current.username(),
-                passwordEncoder.encode(rawPassword),
-                current.displayName(),
-                0
-        ));
+        users.put(username, current.withPassword(passwordEncoder.encode(rawPassword), 0));
     }
 
     /**
@@ -74,10 +70,46 @@ public class DemoUserStore {
                 username,
                 passwordEncoder.encode(rawPassword),
                 username,
-                0
+                0,
+                null,
+                null,
+                Instant.now()
         );
         users.put(username, created);
         return created;
+    }
+
+    /**
+     * 整体替换昵称与邮箱（入参即最终值，可为 null）。
+     * 邮箱非空时不区分大小写检查是否被其他用户占用：占用抛 IllegalStateException（由服务层映射为 409）。
+     * synchronized 保证「判重 + 写入」原子。
+     */
+    public synchronized DemoUser updateProfile(String username, String nickname, String email) {
+        DemoUser current = users.get(username);
+        if (current == null) {
+            throw new IllegalArgumentException("用户不存在: " + username);
+        }
+        if (email != null) {
+            String normalized = email.toLowerCase(Locale.ROOT);
+            boolean taken = users.values().stream()
+                    .anyMatch(u -> !u.username().equals(username)
+                            && u.email() != null
+                            && u.email().toLowerCase(Locale.ROOT).equals(normalized));
+            if (taken) {
+                throw new IllegalStateException("邮箱已被使用");
+            }
+        }
+        DemoUser updated = current.withProfile(nickname, email);
+        users.put(username, updated);
+        return updated;
+    }
+
+    /** 测试辅助：把昵称与邮箱置空（资料类集成测试改共享账号后恢复，同 P2）。 */
+    public synchronized void resetProfile(String username) {
+        DemoUser current = users.get(username);
+        if (current != null) {
+            users.put(username, current.withProfile(null, null));
+        }
     }
 
     /** 测试辅助：删除非预置用户，避免注册用例污染内存仓。 */
