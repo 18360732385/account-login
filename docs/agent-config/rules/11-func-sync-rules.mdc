@@ -1,0 +1,44 @@
+---
+description: 业务代码生成前功能资产检查与同步规则（分册真相）
+globs: backend/src/main/java/**/*.java,docs/func/**
+alwaysApply: false
+---
+
+# 业务代码生成前检查规则（func 分册真相）
+
+## 权威来源说明
+
+- **功能资产真相（SSOT）**：`docs/func/modules/` 下对应业务域文档（如 `01-example.md`）。
+- **索引（非 SSOT）**：`docs/func/func.md` 仅作模块导航与项目概览，**禁止**在索引中维护服务类/方法清单正文。
+- 冲突裁决：`docs/func/modules/*.md` > `func.md`。
+- 编写或更新**模块真相**前，先查看 `docs/func/templates/func-template.md`。
+- 编写或更新**索引**前，先查看 `docs/func/templates/func-index-template.md`。
+
+## 文件命名（强制）
+
+- 模块真相文件名：`NN-{domain}.md`（两位序号与 `func.md`「模块文档」表顺序一致）。
+- 新增模块：取当前最大序号 +1，新建文件并同步更新 `func.md`、`modules/README.md`。
+- 正文子标题统一 `###`；正文标题**不加** `N.` 序号。
+- **禁止**新建或更新模块真相时省略序号前缀。
+
+## 强制检查流程
+
+1. **强制**：先读 `docs/func/func.md`（索引），确认变更落在哪些业务域。
+2. **强制**：对每个涉及域，再读 `docs/func/modules/NN-*.md`（真相）。
+3. **禁止**：只读索引、不读真相就修改业务代码。
+4. **禁止**：把方法清单、服务类表写回 `func.md`。
+
+**索引或模块缺失时**：按 templates 生成索引/真相，并更新导航表。
+
+## 判定清单（满足任一项即必须更新对应 modules/*.md）
+
+- 新增功能模块或服务类
+- 新增、修改、删除方法（含签名、出入参）
+- 方法语义或业务逻辑变更
+- 新增 / 重命名 / 下线业务域 → 同步 `func.md`
+
+## 门禁要求
+
+- 文档不同步视为交付不完整
+- 变更说明须包含：`功能资产已同步（modules/NN-xxx.md）`
+- 若修了智能体高频翻车，须在 `docs/agent-kb/pitfalls.md` 追加或核对 `Pn`（rule `19`）

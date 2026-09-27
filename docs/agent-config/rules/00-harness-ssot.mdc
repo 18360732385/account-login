@@ -1,0 +1,11 @@
+---
+description: harness SSOT 指针 — 根 AGENTS 与 docs 契约为权威（Cursor）
+alwaysApply: true
+---
+
+# harness SSOT 指针
+
+本仓 Agent Harness 的权威入口是根 `AGENTS.md` 与 `docs/func|api|db|redis|jobs`（索引≠真相）。  
+path-scoped 同步规则见同目录 `11/12/13/16` 等。
+
+勿把 plan 当 SSOT；本地 `.cursor/mcp.json` 可填连接参数，**勿提交**进 git。

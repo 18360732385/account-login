@@ -1,0 +1,21 @@
+---
+description: 规划/设计文档与 AGENTS/README 优先中文命名与表述
+globs: docs/**,**/AGENTS.md,**/README.md
+alwaysApply: false
+---
+
+# 中文文档与结构化语料规范
+
+触碰 `docs/**`、任意 `AGENTS.md` / `README.md` 时适用。
+
+## 语言要求
+
+- **文档内容**：尽量使用中文；技术标识可保留英文。
+- **文件名称**：尽量使用中文（例外：`docs/agent-kb/**` 目录与文件名固定英文）。
+
+## 沟通与提交
+
+- 代码注释、审查意见优先中文。
+- Commit / MR 标题与描述优先中文（可夹杂 `fix` / `docs`）。
+
+完整约定见根 `AGENTS.md`「协作约定」。

@@ -1,0 +1,26 @@
+{
+  "_comment": "Codex MCP 启用策略（无密钥）。sync → .codex/config.toml.example 的 enabled / default_tools_approval_mode。优先级：servers.<name> > heuristics > defaults。",
+  "defaults": {
+    "enabled": false,
+    "approval_mode": "prompt"
+  },
+  "heuristics": {
+    "enabled": true,
+    "safe_tools_enabled": true,
+    "writable_stores_enabled": false
+  },
+  "servers": {
+    "gitlab": { "enabled": true, "approval_mode": "prompt" },
+    "chrome-devtools": { "enabled": true, "approval_mode": "prompt" },
+    "sonarqube": { "enabled": false, "approval_mode": "prompt" },
+    "apifox": { "enabled": false, "approval_mode": "prompt" },
+    "mysql-local": { "enabled": false, "approval_mode": "prompt" },
+    "mysql-dev": { "enabled": false, "approval_mode": "prompt" },
+    "mysql-test": { "enabled": false, "approval_mode": "prompt" },
+    "mysql-uat": { "enabled": false, "approval_mode": "prompt" },
+    "redis-local": { "enabled": false, "approval_mode": "prompt" },
+    "redis-dev": { "enabled": false, "approval_mode": "prompt" },
+    "redis-test": { "enabled": false, "approval_mode": "prompt" },
+    "redis-uat": { "enabled": false, "approval_mode": "prompt" }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "_comment": "Hook 资产与各工具事件映射（SSOT）。改动后执行 node scripts/agent-config/sync.mjs 重新生成各工具目录。无等价事件机制的工具不生成、不降级模拟。",
+  "hooks": [
+    {
+      "id": "commit-gate-extended",
+      "script": "git-commit-soft-gate.js",
+      "targets": {
+        "cursor": {
+          "event": "beforeShellExecution",
+          "matcher": "git\\s+(commit|merge)\\b",
+          "timeout": 12
+        },
+        "codex": {
+          "event": "PreToolUse",
+          "matcher": "^Bash$",
+          "adapter": "commit-gate",
+          "timeout": 12
+        }
+      }
+    },
+    {
+      "id": "after-edit",
+      "script": "after-edit-reminder.js",
+      "targets": {
+        "cursor": {
+          "event": "afterFileEdit",
+          "timeout": 8
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+---
+description: Agent knowledge base (architecture / pitfalls / accepted gaps)
+globs: docs/agent-kb/**
+alwaysApply: false
+---
+
+# Agent knowledge base 规则
+
+触碰 `docs/agent-kb/` 时适用。本目录是**仓库知识库**，**不是** `func|api|db|redis|jobs` 契约 SSOT。  
+目录与文件名用英文；正文优先中文。
+
+**回流门禁（跨路径）**：本轮修了 / 确认了智能体高频错误做法时，即使未编辑本目录，也须按下方「回流」追加或更新 `pitfalls.md`（与根 AGENTS「踩坑回流」对齐）。rule `19` 默认仅 path-scoped，纯写代码时不会自动注入全文。
+
+## 先判类型
+
+| 情况 | 动作 |
+|---|---|
+| 产品明确接受（或关闭）某行为缺口 | 更新 `accepted-gaps.md`（`Gn`） |
+| 修了 / 确认了智能体高频错误做法 | 在 `pitfalls.md` **追加** `Pn`（7 列：状态 / 域 / **触发路径**必填），回链 AGENTS / rule / 真相 |
+| 分层 / 关键边界 / 环境指针变了 | 更新 `architecture-overview.md`（**短文 + 指针**） |
+| 仅契约或分册约定变了 | 改 `docs/func|api|db|redis|jobs` 或分册 AGENTS；**不要**把大表抄进本目录 |
+
+## 文档职责
+
+| 文件 | 写什么 | 不写什么 |
+|---|---|---|
+| `architecture-overview.md` | 分层、关键边界、环境指针 | 接口字段表、建表语句、过期 plan、分册大表副本 |
+| `pitfalls.md` | 现象 → 错误做法 → 正确约束落点（7 列：含**状态** / **域** / **触发路径**） | 未确认猜测、契约正文副本 |
+| `accepted-gaps.md` | 明确接受的产品/开发期缺口 | 已修文档错误、未排期 bug 清单 |
+
+## ID 约定
+
+- pitfalls：`P1`、`P2`… **只追加、不改旧 ID、不重排**；7 列必填（状态仅 `活跃` / `已根治`；**触发路径/关键词必填**——写会被 Grep 到的路径片段）；域必须来自**封闭词表**（见 `pitfalls.md` 文末；新域先改 `scripts/agent-kb/lint-pitfalls.mjs` 的 `DOMAINS`）
+- 根治后：改状态「已根治」并**移动**到「已根治留档」区（ID 不复用）；每个 `Pn` 须同时登记到「路径速查」与「域速查」
+- accepted-gaps：`G1`、`G2`…；状态仅 `接受` / `已关闭`
+- **改完 `pitfalls.md` 必跑**：`node scripts/agent-kb/lint-pitfalls.mjs`（7 列 / ID 递增 / 状态分区 / 词表 / 链接 / 速查一致性，不过不许交付）
+
+## 回流（强制）
+
+动手前先按「三问」自检（与根 AGENTS「踩坑回流」对齐）：
+
+1. 本轮是否修了 / 确认了智能体易再犯的**错误做法**？否 → 不必改 `pitfalls.md`
+2. 已有对应 `Pn` → 核对「正确约束落点」是否仍准；若根因已消除 → 改 `已根治` 移入留档区
+3. 无 → **追加**一行并回链落点
+
+| 时机 | 要求 |
+|---|---|
+| 修好一类智能体易再犯的错 | 走上方三问；追加 / 核对后跑 lint |
+| 产品确认某行为暂不修 | 写入或更新 `accepted-gaps.md`（`接受`） |
+| 缺口已修复 | `Gn` 改为 `已关闭`，来源列注明修复（commit / 迁移 / 文档） |
+| 仅普通业务交付、无新翻车模式 | 不必改本目录 |
+
+动手前可先读本目录 [README.md](docs/agent-kb/README.md)「怎么选」；读 `pitfalls.md` 时**先按域筛**，勿整表无差别灌入。
+
+## 禁止
+
+- 用本目录覆盖契约真相或 AGENTS 红线原文
+- 把「文档写错了」写成接受缺口
+- 把未确认猜测写入 `pitfalls.md`
+- 修了高频翻车却不追加 / 不核对 `Pn`

@@ -1,0 +1,55 @@
+---
+description: 接口文档同步规则
+globs: backend/src/main/java/**/controller/**/*.java,backend/src/main/java/**/dto/**/*.java,frontend/src/api/**,docs/api/**
+alwaysApply: false
+---
+
+# 接口文档同步规则
+
+## 权威来源说明
+
+- **接口契约真相（SSOT）**：`docs/api/modules/` 下对应模块文档。
+- **索引（非 SSOT）**：`docs/api/api.md` 仅作模块导航与全局约定；**禁止**在索引中展开单接口字段表。
+- 冲突裁决：`docs/api/modules/*.md` > `api.md`。
+- 编写真相前查看 `docs/api/templates/api-doc-template.md`；写索引前查看 `api-index-template.md`。
+- 接口能力说明须与对应 `docs/func/modules/*.md` 保持一致。
+
+## 文件命名与接口标题编号（强制）
+
+- 模块真相文件名：`NN-{service}-{domain}.md`（两位序号与 `api.md` 表顺序一致）。
+- 新增模块：取当前最大序号 +1，并同步更新 `api.md`、`modules/README.md`。
+- 接口章节标题：`## N. 标题`；子标题统一 `###`（功能逻辑 / 请求参数 / 响应参数）。
+- **仅**对含接口地址的章节编号；变更记录等不编号。
+
+## 强制检查流程
+
+1. 先读 `docs/api/api.md` 索引。
+2. 再读对应 `docs/api/modules/NN-*.md` 真相。
+3. **禁止**只读索引就改接口契约；**禁止**把字段表写回 `api.md`。
+
+## 判定清单（满足任一项 → 更新对应 `modules/*.md`）
+
+- 新增 / 下线接口
+- 改请求字段、类型、必填、默认值
+- 改响应结构、语义、错误码
+- 改 URL、请求方式、鉴权、限流
+- 改接口业务语义（即使参数未变）
+
+另须更新 `api.md` 索引：新增/重命名/下线模块文档；导航表说明、基础路径或接口数变更；全局约定 / 错误码表变更。
+
+## 变更触发条件
+
+入参 / 出参 / URL / 请求方式 / 鉴权变更 → 必须同步 API 文档。
+
+## 与功能资产 / Redis 联动
+
+- 接口新增或下线 → 同步对应 `docs/func/modules/*.md`（必要时改 `func.md`）
+- 接口语义变更 → 同步功能模块中的方法说明与调用方影响
+- 依赖的 Redis Key 契约变更 → 联动 `docs/redis/keys/`（必要时改 `redis.md`）
+
+## 门禁要求
+
+- 变更说明须含「API 文档已同步」与「功能资产已同步」
+- `docs/api/modules/` 变更须与代码同行提交；禁止只改索引漏更真相
+- **前端消费层**（`packages/api-client` / `types` / `queries` 或仓内等价路径）变更：须先读 `docs/api/modules` 真相，再改类型与请求封装（与 rule `17` 对齐）
+- 若修了契约双源类翻车，追加或核对 `docs/agent-kb/pitfalls.md` 的 `Pn`

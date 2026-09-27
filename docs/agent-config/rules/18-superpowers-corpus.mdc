@@ -1,0 +1,41 @@
+---
+description: docs/superpowers 规划语料索引与状态同步
+globs: docs/superpowers/**
+alwaysApply: false
+---
+
+# superpowers 规划语料规则
+
+触碰 `docs/superpowers/` 时适用。本目录**不是**运行时 SSOT；冲突以 `docs/func|api|db|redis|jobs` 真相 + 代码为准。
+
+**提交门禁（跨路径）**：用户要求 `git commit` / 交付收口时，即使未编辑本目录，也必须执行下方「AI 提交门禁」。
+
+## 目录约定
+
+| 路径 | 用途 |
+|---|---|
+| `plans/`、`specs/` | **仅进行中** |
+| `archive/plans/`、`archive/specs/` | 已交付 / 废弃（默认只读） |
+| `README.md` | 活跃主题索引 |
+| `ARCHIVE.md` | 已交付 / 废弃主题索引 |
+
+## 索引表列
+
+主题表：`日期 | 主题 | Spec | Plan | 提交`（日期倒序；「提交」= 代表性实现 commit，不是 MR）。
+
+## 动手前
+
+1. 先读 `docs/superpowers/README.md`「进行中」表
+2. 勿按「已交付」checkbox 改生产代码；勿遍历 `archive/` 当任务清单
+
+## AI 提交门禁（强制）
+
+1. Read 进行中表
+2. 若本轮完成某主题主功能 → **先收口再 commit**（徽章 + `git mv` archive + README→ARCHIVE）
+3. 纯 fix/chore 可不改索引
+
+## 禁止
+
+- 主功能已合入却漏收口
+- 把规划语料当成契约真相
+- 未授权按已交付 plan 改生产代码

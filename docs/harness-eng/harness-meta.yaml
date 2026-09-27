@@ -1,0 +1,16 @@
+# harness-eng install metadata — do not put secrets here
+
+skill: harness-eng
+skill_version: 0.7.9
+agent_config: true
+rulehook: false
+ladder: L5
+domains: [func, api]
+agents_variant: modules
+glob_profile: wide
+last_mode: land
+ai_tools: [cursor, codex]
+installed_at: 2026-09-27
+ready_quality: 80
+ready_coverage: 0.8
+fill_mcp_profile: test

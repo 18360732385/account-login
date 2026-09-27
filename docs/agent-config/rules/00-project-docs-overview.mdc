@@ -1,0 +1,59 @@
+---
+description: 项目文档总入口与优先级（alwaysApply；细节见 AGENTS）
+alwaysApply: true
+---
+
+# 项目文档总入口
+
+细节与命令以根 `AGENTS.md`、分册 `**/AGENTS.md` 为准；**勿把本 rule 当契约正文**。
+
+## 文档权威（冲突裁决）
+
+1. 根 `AGENTS.md`（命令、红线、rules 索引）
+2. 分册 AGENTS（按改动路径）
+3. path-scoped `.cursor/rules/`（同步门禁）
+4. `docs/func|api|db|redis|jobs`：先索引再真相（按已启用契约域；rules `11`–`13`、`16`、`20`）
+5. `docs/agent-kb/`（architecture / pitfalls / accepted-gaps；非契约 SSOT）
+6. `docs/superpowers/README.md`：仅「进行中」（若启用；非 SSOT）
+7. （可选）`docs/releases/`：发版过程域（非契约 SSOT；skill `release-eng`）
+
+冲突裁决：分册 AGENTS / 契约真相以**磁盘最新**为准；动手前 Read 重读，勿沿用会话早期摘要。
+
+## 读序（按场景）
+
+| 场景 | 先读 |
+|---|---|
+| **定向**（新会话 / 边界不清） | 根 AGENTS → `docs/agent-kb/architecture-overview.md` → 相关 pitfalls **按域** |
+| **改业务 / 契约** | 分册 AGENTS → `docs/func\|api\|db\|redis\|jobs` 索引+真相 → 代码 |
+| **改 Cron / 定时任务** | `docs/jobs/jobs.md` → `tasks/NN-*.md` → Scheduler / Registry / yml（rule `20`） |
+| **发版 / 上线清单** | 用户点名 `release-eng`（若本仓启用） |
+| **交付收口** | 契约已同步？→ superpowers 进行中表（若启用）→ **新翻车须回流 `Pn` 并更新「路径速查」**（Never do 只一句话 + `→ Pn`） |
+
+## 同步一句
+
+改业务 / 接口 / 表 / Redis / **Cron·定时任务**：先读索引再读真相，改后更新真相。踩坑回流：`docs/agent-kb/pitfalls.md`。
+
+## 高频避坑（薄片）
+
+动手前查 `docs/agent-kb/pitfalls.md`：先看文首**路径速查**（按将要触碰的路径找 `Pn`），或 Grep 路径/关键词（例 `db/migration`、`scheduler`）；按域 Grep `| {域} |` 兜底；**禁止无筛选整表 Read**，**勿**把整份 `pitfalls.md` alwaysApply。
+
+| ID | 一句 |
+|---|---|
+| （通用） | 冲突以磁盘最新为准，勿沿用会话早期摘要 |
+| （通用） | 规划语料 / 过期 plan 不是契约 SSOT |
+| （Jobs） | 改 Cron 须四件套：任务码 / Scheduler / yml / Registry + `docs/jobs` |
+| （日志/注释） | 改 Java/yml：Service/Tool/Infra 打步骤日志 + 增量中文注释；`catch`/硬失败须 Throwable 最后一参（若装 rule `21`） |
+
+TODO(harness-eng): 将本仓稳定高频翻车压缩为 3～7 行薄片，回链 pitfalls `Pn`。
+
+## 提交门禁
+
+- **superpowers**：用户要求 `git commit` 或本轮完成某规划主题主功能时，先 Read `docs/superpowers/README.md`「进行中」表；漏收口则先收口（若启用 L3）。
+- **契约同步**（若装 hooks 家族 `commit-gate-extended`）：commit 时按暂存路径软提醒漏同步 `docs/func|api|db|redis|jobs` 真相（domains.yaml `hook:` 段驱动）。
+- **SQL/环境**（同上）：暂存含 `db/migration/*.sql` 时软提醒按迁移模式人工同步到各环境（不自动执行）。
+- **agent-kb**：本轮修了智能体高频翻车模式 → 追加或核对 `Pn`（rule `19` 三问）；改过 `pitfalls.md` 须跑 `node scripts/agent-kb/lint-pitfalls.mjs`。
+- **agent-config**（仅 L5 配置 SSOT 管线仓）：改 `docs/agent-config/` 后必跑 `node scripts/agent-config/sync.mjs` 并一并提交生成物；提交前可 `--check` 校验漂移；**生成物勿手改**。
+
+## 红线（不另建 rule）
+
+禁止事项以根 `AGENTS.md`「Never do」+ `docs/agent-kb/pitfalls.md` 为准；**不要**再维护独立 alwaysApply 红线卡。

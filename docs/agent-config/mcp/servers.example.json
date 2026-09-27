@@ -1,0 +1,31 @@
+{
+  "_comment": "无密示例；真实连接信息由 fill-mcp 经确认写入 servers.json（vendored_shared）或本机 mcp.local.json（example_only）。启用策略见同目录 policy.json。",
+  "mcpServers": {
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "<REPLACE_ME>",
+        "GITLAB_API_URL": "https://gitlab.example.com/api/v4"
+      }
+    },
+    "mysql-test": {
+      "command": "uvx",
+      "args": ["mysql-mcp-server"],
+      "env": {
+        "MYSQL_HOST": "127.0.0.1",
+        "MYSQL_PORT": "3306",
+        "MYSQL_USER": "readonly",
+        "MYSQL_PASSWORD": "<REPLACE_ME>",
+        "MYSQL_DB": "example_db"
+      }
+    },
+    "redis-test": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-redis"],
+      "env": {
+        "REDIS_URL": "<REPLACE_ME>"
+      }
+    }
+  }
+}

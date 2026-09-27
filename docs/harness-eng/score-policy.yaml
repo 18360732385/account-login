@@ -1,0 +1,53 @@
+# score-policy — 开干覆盖策略（0.7.0+；裁决见 glossary「覆盖裁决」）
+# schema_version: 0.7.0 — 开干策略文件 schema（≠ skill_version；技能号见 manifest.yaml）
+# 路径：目标仓 docs/harness-eng/score-policy.yaml
+# coverage_ready 以本文件为准；域目标缺省回退 meta.ready_coverage / CLI。
+# 与 domain_caps / formula_ceiling（形态轴）无关。
+#
+# 兼容：无 score-policy 文件 → legacy；有文件未写 gate_profile → 按 strict。
+# 新 land / pipeline /「全部推荐」模板显式 strict + all_domains。
+# 高门槛显式 gate_profile: gold（覆盖 100% · 形态≥95 · 完成度≥95 · TODO·B · warnings=0）。
+# 0.7.0：形态分探针≈75+深度≈25→满分100；strict morph_floor=75；gold=95。
+
+version: "0.7.0"
+
+# overall | all_domains | weighted
+# - overall：沿用全局 ready_coverage（旧默认）
+# - all_domains：凡 inventory 有数据的域，均须 ≥ coverage_targets[域]【大仓推荐】
+# - weighted：按 api0.35/func0.25/db0.25/redis0.15 对域覆盖率加权，≥ ready_coverage
+coverage_mode: all_domains
+
+# 分域覆盖目标（相对 inventory）；缺省回退 ready_coverage
+# gold 运行时强制各契约域 1.0（仅 code>0 的域计入 coverage_ready）
+coverage_targets:
+  api: 0.8
+  func: 0.8
+  db: 0.8
+  redis: 0.8
+  jobs: 0.8
+
+# 列密度（计入 template_completeness；gold 另用 template_completeness_min）
+density:
+  api_example_min_ratio: 0.9   # 有「示例值」列时，非空行占比
+  db_comment_min_ratio: 0.5    # 字段 COMMENT/说明 填充占比
+  func_method_desc_min_ratio: 0.7
+  redis_ttl_required: true
+  redis_example_required: true
+
+# 开干附加闸（0.2.29+；0.3.3 增 gold；0.7.0 重标定 morph_floor）
+# gate_profile: legacy | strict | gold
+# - legacy：仅 skeleton ∧ coverage_ready ∧ semantic ∧ plan_closed
+# - strict：并入下方 gate（形态≥75 · TODO 真相面 · blockers=0）
+# - gold：形态≥95 · 完成度≥95 · 覆盖 100% · TODO 扫面 B · blockers/warnings=0 · 语义收紧
+# 【推荐】新仓/大仓仍 strict；契约贴顶后显式升 gold
+gate_profile: strict
+
+gate:
+  morph_floor: 75                 # 各有数据域的形态分下限（gold 缺省 95）
+  template_completeness_min: null # gold 缺省 95；null=不检
+  forbid_harness_todo: true
+  todo_scan: truths               # truths | harness_docs | all（gold 缺省 harness_docs）
+  gold_ratio_min: null
+  acceptance_blockers_max: 0
+  acceptance_warnings_max: null   # gold 缺省 0；null=不检
+  require_no_lagging_domain: false

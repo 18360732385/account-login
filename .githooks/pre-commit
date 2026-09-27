@@ -1,0 +1,8 @@
+#!/bin/sh
+# harness-eng L3 soft commit gate (never blocks).
+# Enable: git config core.hooksPath .githooks
+DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+if command -v node >/dev/null 2>&1; then
+  node "$DIR/../docs/agent-config/hooks/git-commit-soft-gate.js" --git || true
+fi
+exit 0

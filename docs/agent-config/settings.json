@@ -1,0 +1,3 @@
+{
+  "_comment": ".cursor/settings.json 的 SSOT；qoder 的 settings 由 sync 合并 hooks 段后写出。改动后执行 node scripts/agent-config/sync.mjs"
+}

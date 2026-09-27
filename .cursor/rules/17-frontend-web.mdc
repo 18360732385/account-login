@@ -1,0 +1,40 @@
+---
+description: 前端协作约束（契约同步 + 禁用清单 + 改动路径）
+globs: frontend/src/**/*.ts,frontend/src/**/*.tsx,frontend/vite.config.ts,frontend/package.json
+alwaysApply: false
+---
+
+> ⚠️ 本文件由 `node scripts/agent-config/sync.mjs` 生成，请勿手改；SSOT：`docs/agent-config/`。
+
+
+# 前端协作规则（协作包；非契约域）
+
+触碰前端应用或共享包（`ui` / `theme` / `api-client` / `types` 等）时适用。  
+完整说明见前端分册 `frontend/AGENTS.md`（若有）。
+
+## 动手前
+
+1. 读前端 `README.md` 与设计 / 主题文档（若有）
+2. 改 API 契约：先读 `docs/api` 索引 → 真相 → 前端 `types` → `api-client`（必要时 queries 层）
+3. 改业务语义：先读 `docs/func` 索引 → 真相
+4. 改视觉：只动主题 token / 设计文档；勿引入新 UI 框架
+
+## 禁止
+
+- 重新引入仓内已禁用的 UI / 样式库（禁用清单以前端分册 `AGENTS.md` 为准）
+- 运行时加载外网字体（须自托管）
+- 改接口响应结构却不同步 `docs/api` + `types` + `api-client`
+- 在后端模块内放前端静态资源
+
+## 踩坑回流
+
+本轮修了前端侧智能体易再犯的错 → 在 `docs/agent-kb/pitfalls.md` 追加或核对 `Pn`（rule `19`）。
+
+## 改动路径速查
+
+| 需求 | 优先改动 |
+|---|---|
+| 新 REST 对接 | `types` → `api-client` → queries → 页面 |
+| 共享控件 / 壳 | `ui` 包 |
+| 主题 / 样式 token | `theme` 包 + 设计文档 |
+| 登录 / Token | `auth` 包 |

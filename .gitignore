@@ -25,3 +25,15 @@ frontend/.env.*.local
 .vscode/
 *.swp
 .DS_Store
+
+# harness-eng — suggested gitignore entries
+# Append to repo root .gitignore if missing.
+# example_only：Do not commit real MCP secrets（下列 mcp.json 真密路径；本地可填）。
+# vendored_shared：render 会跳过 mcp.json 忽略行（团队约定跟踪共享真密）。
+.cursor/mcp.json
+.mcp.json
+.trae/mcp.json
+.codex/config.toml
+# fill-truths worker fragments (merge into SSOT via fill-merge-api)
+docs/api/.fill-work/
+docs/**/.fill-work/
