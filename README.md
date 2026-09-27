@@ -48,6 +48,8 @@ cd frontend && npm install && npm run dev
 | POST | `/api/auth/register` | 无 | `{username,password}` → 同登录 JWT |
 | POST | `/api/auth/login` | 无 | `{username,password}` → JWT |
 | GET | `/api/me` | Bearer | 当前用户 |
+| GET | `/api/users/me` | Bearer | 个人资料 `{username,nickname,email,createdAt}` |
+| PUT | `/api/users/me` | Bearer | `{nickname?,email?}` 修改昵称/邮箱（400 字段级错误 / 409 邮箱已被使用） |
 | POST | `/api/auth/logout` | Bearer | 吊销当前 token |
 | POST | `/api/auth/change-password` | Bearer | `{oldPassword,newPassword}` |
 

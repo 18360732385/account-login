@@ -24,7 +24,8 @@
 
 ```text
 JwtAuthenticationFilter（Bearer → 验签/过期 → denylist(jti) → tokenVersion）→ AuthController → AuthService → DemoUserStore / TokenDenylist / JwtService
-异常：ResponseStatusException / MethodArgumentNotValidException → GlobalExceptionHandler → ErrorResponse(code, message)
+                                                                            → UserController → UserProfileService → DemoUserStore
+异常：ResponseStatusException / MethodArgumentNotValidException / FieldValidationException → GlobalExceptionHandler → ErrorResponse(code, message, fieldErrors?)
 ```
 
 ## 关键边界

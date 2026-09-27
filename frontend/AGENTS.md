@@ -7,10 +7,11 @@
 
 | 项 | 说明 |
 |---|---|
-| 职责 | 账号 SPA：登录 / 注册 / 个人资料 / 改密 / 登出，消费 `backend` 的 `/api/*` |
+| 职责 | 账号 SPA：登录 / 注册 / 首页（当前用户 + 改密 + 登出）/ 个人资料页 `/profile`（查看与修改昵称、邮箱），消费 `backend` 的 `/api/*` |
 | 边界 | **仅前端**；勿把后端静态资源塞进后端模块 |
 | 技术栈 | Vite 8 + React 19 + TypeScript 6 · npm（`package-lock.json`）· 原生 CSS（`App.css`/`index.css`，无 UI 库）· Vitest 5 + Testing Library + jsdom · oxlint |
-| 登录态 | `accessToken` 仅存 `App.tsx` 的 React state（不落 localStorage，刷新即需重新登录）；401 时回到登录视图 |
+| 登录态 | `accessToken` 仅存 `App.tsx` 的 React state（不落 localStorage，刷新即需重新登录）；401 时回到登录视图（资料页 401 → `/login` + 提示并在登录后回跳） |
+| 路由 | **无路由库**：`App.tsx` 用 History API（`pushState`/`replaceState`/`popstate`）实现 `/`、`/profile`（受保护）、`/login`；新增受保护页加入 `PROTECTED_PATHS` |
 | 开发端口 | `:5173`（`vite.config.ts` 代理 `/api` → `http://localhost:8080`；或设 `VITE_API_BASE_URL` 直连） |
 
 ## 动手前检查
@@ -26,15 +27,15 @@
 cd frontend
 npm ci                 # 安装（锁文件为准）
 npm run dev            # :5173
-npm test               # vitest run（App.test.tsx、api/client.test.ts）
+npm test               # vitest run（App.test.tsx、api/client.test.ts、components/ProfilePage.test.tsx）
 npm run build          # tsc -b 类型检查 + vite build
 npm run lint           # oxlint
 ```
 
 ## 栈与禁用清单
 
-- **推荐栈**：React 函数组件 + hooks；请求统一走 `src/api/client.ts`（原生 `fetch`）；状态用组件 state（本仓无路由库 / 状态库）
-- **禁用**（勿重新引入）：未经需求确认不引入 UI 组件库、CSS-in-JS、axios、全局状态库；组件内直接 `fetch`（须经 `api/client.ts`）
+- **推荐栈**：React 函数组件 + hooks；请求统一走 `src/api/client.ts`（原生 `fetch`）；状态用组件 state（本仓无路由库 / 状态库；路由见上表 History API 约定）
+- **禁用**（勿重新引入）：未经需求确认不引入 UI 组件库、CSS-in-JS、axios、全局状态库、路由库；组件内直接 `fetch`（须经 `api/client.ts`）
 - 完整禁用说明：本分册为准；rule `17` 只提醒路径
 
 ## api-client / 契约同步
@@ -44,7 +45,7 @@ npm run lint           # oxlint
 | 后端 REST 契约 | `docs/api/modules/…`（SSOT）+ 本模块 api-client / types / queries |
 | 仅前端展示 | 本模块组件；**勿**反向改契约真相 |
 
-- api-client：`src/api/client.ts`（`register` / `login` / `fetchMe` / `logout` / `changePassword`，错误统一抛 `ApiError(status, message, code)`）
+- api-client：`src/api/client.ts`（`register` / `login` / `fetchMe` / `logout` / `changePassword` / `fetchProfile` / `updateProfile`，错误统一抛 `ApiError(status, message, code, fieldErrors?)`）
 - types：`src/api/types.ts`（与后端 record DTO 字段一一对应）
 - queries：无（未用 react-query）
 - 测试替身：`src/api/client.test.ts` mock `fetch`
@@ -53,8 +54,8 @@ npm run lint           # oxlint
 
 | 需求 | 优先改动 |
 |---|---|
-| 页面 / 视图切换 | `src/App.tsx`（无路由库，按登录态切换视图） |
-| 表单 / 视图组件 | `src/components/{LoginForm,RegisterForm,ProfileView,ChangePasswordForm}.tsx` |
+| 页面 / 视图切换 | `src/App.tsx`（无路由库：按登录态 + History API 路径切换视图）· 导航 `src/components/NavBar.tsx` |
+| 表单 / 视图组件 | `src/components/{LoginForm,RegisterForm,ProfileView,ChangePasswordForm,ProfilePage}.tsx`（`ProfilePage` 为 `/profile` 资料页，自取数；首页为 `ProfileView`） |
 | 接口类型 / 请求封装 | `src/api/types.ts` / `src/api/client.ts` |
 | 契约正文 | `docs/api/modules/…`（先真相后代码） |
 
