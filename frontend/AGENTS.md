@@ -11,7 +11,7 @@
 | 边界 | **仅前端**；勿把后端静态资源塞进后端模块 |
 | 技术栈 | Vite 8 + React 19 + TypeScript 6 · npm（`package-lock.json`）· 原生 CSS（`App.css`/`index.css`，无 UI 库）· Vitest 5 + Testing Library + jsdom · oxlint |
 | 登录态 | `accessToken` 仅存 `App.tsx` 的 React state（不落 localStorage，刷新即需重新登录）；401 时回到登录视图（资料页 401 → `/login` + 提示并在登录后回跳） |
-| 路由 | **无路由库**：`App.tsx` 用 History API（`pushState`/`replaceState`/`popstate`）实现 `/`、`/profile`（受保护）、`/login`；新增受保护页加入 `PROTECTED_PATHS` |
+| 路由 | **无路由库**：`App.tsx` 用 History API（`pushState`/`replaceState`/`popstate`）实现 `/`、`/profile`（受保护）、`/login`；新增受保护页加入 `PROTECTED_PATHS`；重定向勿在 effect 内同步 setState（oxlint warning）→ P6 |
 | 开发端口 | `:5173`（`vite.config.ts` 代理 `/api` → `http://localhost:8080`；或设 `VITE_API_BASE_URL` 直连） |
 
 ## 动手前检查
