@@ -11,7 +11,9 @@
 | `DemoUserStore` | 演示用户内存仓（`ConcurrentHashMap`），预置 demo/admin，负责密码哈希与 tokenVersion 递增 | `com.example.accountlogin.service.DemoUserStore` |
 | `TokenDenylist` | 按 JWT `jti` 记录已吊销 token 直到其过期（内存，重启失效） | `com.example.accountlogin.service.TokenDenylist` |
 | `JwtService` | HS256 JWT 签发与解析（`jti` / `sub` / `tv` / `exp`） | `com.example.accountlogin.security.JwtService` |
-| `DemoUser` | 用户不可变记录（用户名、BCrypt 哈希、显示名、tokenVersion） | `com.example.accountlogin.service.DemoUser` |
+| `DemoUser` | 用户不可变记录（用户名、BCrypt 哈希、显示名、tokenVersion、昵称、邮箱、注册时间） | `com.example.accountlogin.service.DemoUser` |
+| `UserProfileService` | 个人资料编排：查询 / 修改昵称与邮箱；trim + 字段校验聚合为 `FieldValidationException`，邮箱冲突映射 409 | `com.example.accountlogin.service.UserProfileService` |
+| `FieldValidationException` | 字段级校验异常（`Map<字段, 文案>`，保持插入顺序），由 `GlobalExceptionHandler` 转 400 `fieldErrors` | `com.example.accountlogin.service.FieldValidationException` |
 
 ### 数据实体 / 配置（按需）
 
@@ -21,13 +23,13 @@
 | `app.jwt.expiration-ms` | token 有效期毫秒，默认 3600000 |
 | `JwtAuthenticationFilter` | 每请求解析 Bearer token；校验签名/过期 → denylist → `tv` 与用户当前 tokenVersion 一致才建立认证 |
 | `SecurityConfig` | 无状态会话；放行 `POST /api/auth/login|register` 与 `/error`；401 入口点输出 `ErrorResponse(UNAUTHORIZED, 需要登录)`；CORS 允许 `localhost:5173` |
-| `GlobalExceptionHandler` | `ResponseStatusException` → `ErrorResponse("<状态>", reason)`；校验失败 → `ErrorResponse("BAD_REQUEST", 首个字段错误)` |
+| `GlobalExceptionHandler` | `ResponseStatusException` → `ErrorResponse("<状态>", reason)`；Bean Validation 失败 / `FieldValidationException` → `ErrorResponse("BAD_REQUEST", 首个字段错误, fieldErrors)`；邮箱冲突 → 409 带 `fieldErrors.email` |
 
 ### 关联文档
 
 | 类型 | 路径 |
 |---|---|
-| 关联 API | `docs/api/modules/01-account-login-auth.md` |
+| 关联 API | `docs/api/modules/01-account-login-auth.md`、`docs/api/modules/02-account-login-user.md` |
 | 关联表 | 无（本仓无数据库；db 域未启用） |
 | 前端调用 | `frontend/src/api/client.ts`、`frontend/AGENTS.md` |
 | 索引 | `docs/func/func.md` |
@@ -37,6 +39,7 @@
 | 版本 | 类型 | 内容 | 操作人 | 更新时间 |
 |---|---|---|---|---|
 | v0.1 | 创建 | harness-eng fill-truths-agents 精填 5 个服务类方法清单，经 acceptance + fill-merge 合入 | 张健 | 2026-09-27 |
+| v0.2 | 修改 | 新增 `UserProfileService` / `FieldValidationException`；`DemoUser` 增 nickname/email/createdAt；`DemoUserStore` 增 `updateProfile` / `resetProfile`（feature-eng 主题 2026-09-27-profile） | 张健 | 2026-09-27 |
 
 ---
 
@@ -90,13 +93,13 @@
 
 `DemoUser`（`com.example.accountlogin.service.DemoUser`）
 
-不可变 `record`；`tokenVersion` 嵌入 JWT `tv`，改密时递增以使旧 token 全部失效。
+不可变 `record`；`tokenVersion` 嵌入 JWT `tv`，改密时递增以使旧 token 全部失效。`nickname` / `email` 可为 `null`（预置与新注册用户均为 `null`）；`createdAt` 为创建时刻（预置用户=进程启动时刻）。
 
 ### 方法清单
 
 | 方法签名 | 功能说明 | 入参 | 出参 |
 |---|---|---|---|
-| `DemoUser(String username, String passwordHash, String displayName, int tokenVersion)` | 构造用户快照（record 规范构造器；字段只读，更新需整体替换） | 用户名、BCrypt 哈希、显示名、tokenVersion | 用户记录 |
+| `DemoUser(String username, String passwordHash, String displayName, int tokenVersion, String nickname, String email, Instant createdAt)` | 构造用户快照（record 规范构造器；字段只读，更新需整体替换） | 用户名、BCrypt 哈希、显示名、tokenVersion、昵称、邮箱、注册时间 | 用户记录 |
 
 ## 4. DemoUserStore
 
@@ -106,7 +109,7 @@
 
 `DemoUserStore`（`com.example.accountlogin.service.DemoUserStore`）
 
-演示用户内存仓；构造时预置 `demo/demo123`（演示用户）与 `admin/admin123`（管理员）。改密会改写共享内存哈希，集成测试须用 `resetCredentials` 恢复。
+演示用户内存仓；构造时预置 `demo/demo123`（演示用户）与 `admin/admin123`（管理员）。改密会改写共享内存哈希，集成测试须用 `resetCredentials` 恢复；改资料须用 `resetProfile` 恢复。
 
 ### 方法清单
 
@@ -117,6 +120,8 @@
 | `void resetCredentials(String username, String rawPassword)` | 测试辅助：把密码重置为已知明文且 tokenVersion 归零 | username、明文密码 | 无 |
 | `DemoUser register(String username, String rawPassword)` | 新建用户（显示名=用户名，tokenVersion=0）；重名抛 IllegalStateException | username、明文密码 | 新用户记录 |
 | `void removeIfPresent(String username)` | 测试辅助：删除非预置用户（demo/admin 受保护不删） | username | 无 |
+| `DemoUser updateProfile(String username, String nickname, String email)` | `synchronized`：邮箱非空时不区分大小写检查是否被**其他**用户占用（占用抛 IllegalStateException），通过后整体替换昵称与邮箱（入参为最终值，可为 null）；用户不存在抛 IllegalArgumentException | username、昵称、邮箱 | 更新后的用户记录 |
+| `void resetProfile(String username)` | 测试辅助：把昵称与邮箱置 null（同 P2，集成测试改共享账号后恢复） | username | 无 |
 
 ## 5. TokenDenylist
 
@@ -135,3 +140,20 @@
 | `void revoke(String jti, Instant expiresAt)` | 记录 jti 吊销直到过期（缺省 now+1h；取较晚者），顺带清理已过期条目；空 jti 忽略 | jti、过期时刻 | 无 |
 | `boolean isRevoked(String jti)` | 判断 jti 是否仍在吊销期内；过期条目惰性删除并返回 false | jti | 是否已吊销 |
 
+
+## 6. UserProfileService
+
+**evidence:** `backend/src/main/java/com/example/accountlogin/service/UserProfileService.java`
+
+### 服务类
+
+`UserProfileService`（`com.example.accountlogin.service.UserProfileService`）
+
+个人资料编排层；被 `UserController`（`/api/users/me`）调用，依赖 `DemoUserStore`。校验口径：昵称 trim 后按码点 1–20；邮箱 trim 后匹配 `^[^\s@]+@[^\s@]+\.[^\s@]+$` 且 ≤100 字符；字段缺省/`null` 不修改，空串清空。
+
+### 方法清单
+
+| 方法签名 | 功能说明 | 入参 | 出参 |
+|---|---|---|---|
+| `UserProfileResponse get(String username)` | 按已认证用户名查询资料；用户已被移除时 401「用户不存在」 | username：JWT subject | 用户名 + 昵称 + 邮箱 + 注册时间 |
+| `UserProfileResponse update(String username, UpdateProfileRequest request)` | 逐字段 trim/校验，错误聚合抛 `FieldValidationException`（400）；调用 `DemoUserStore.updateProfile` 写入，邮箱被他人占用映射 409「该邮箱已被使用」（带 `fieldErrors.email`） | username、request：nickname?、email? | 更新后的资料 |

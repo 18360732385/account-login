@@ -6,6 +6,8 @@ import type {
   MeResponse,
   MessageResponse,
   RegisterRequest,
+  UpdateProfileRequest,
+  UserProfileResponse,
 } from './types'
 
 /**
@@ -22,26 +24,35 @@ export function getApiBaseUrl(): string {
 export class ApiError extends Error {
   status: number
   code?: string
+  fieldErrors?: Record<string, string>
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(
+    status: number,
+    message: string,
+    code?: string,
+    fieldErrors?: Record<string, string>,
+  ) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.code = code
+    this.fieldErrors = fieldErrors
   }
 }
 
 async function parseError(res: Response): Promise<ApiError> {
   let message = `请求失败 (${res.status})`
   let code: string | undefined
+  let fieldErrors: Record<string, string> | undefined
   try {
     const body = (await res.json()) as ErrorResponse
     if (body.message) message = body.message
     if (body.code) code = body.code
+    if (body.fieldErrors) fieldErrors = body.fieldErrors
   } catch {
     /* ignore non-JSON */
   }
-  return new ApiError(res.status, message, code)
+  return new ApiError(res.status, message, code, fieldErrors)
 }
 
 function authHeaders(accessToken: string): HeadersInit {
@@ -105,4 +116,28 @@ export async function changePassword(
   })
   if (!res.ok) throw await parseError(res)
   return (await res.json()) as MessageResponse
+}
+
+export async function fetchProfile(accessToken: string): Promise<UserProfileResponse> {
+  const base = getApiBaseUrl()
+  const res = await fetch(`${base}/api/users/me`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  if (!res.ok) throw await parseError(res)
+  return (await res.json()) as UserProfileResponse
+}
+
+export async function updateProfile(
+  accessToken: string,
+  req: UpdateProfileRequest,
+): Promise<UserProfileResponse> {
+  const base = getApiBaseUrl()
+  const res = await fetch(`${base}/api/users/me`, {
+    method: 'PUT',
+    headers: authHeaders(accessToken),
+    body: JSON.stringify(req),
+  })
+  if (!res.ok) throw await parseError(res)
+  return (await res.json()) as UserProfileResponse
 }

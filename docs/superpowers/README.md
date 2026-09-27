@@ -32,3 +32,4 @@
 | 日期 | 事项及说明 | 状态 |
 |---|---|---|
 | 2026-09-27 | harness-eng 0.7.9 land：与 feature-eng 旧 README 合并为单页 | 已生效 |
+| 2026-09-27 | feature-eng close：「个人资料查看与编辑」移入 ARCHIVE | 已生效 |

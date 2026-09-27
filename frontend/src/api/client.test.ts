@@ -3,10 +3,12 @@ import {
   ApiError,
   changePassword,
   fetchMe,
+  fetchProfile,
   getApiBaseUrl,
   login,
   logout,
   register,
+  updateProfile,
 } from './client'
 
 afterEach(() => {
@@ -202,5 +204,79 @@ describe('changePassword', () => {
     await expect(
       changePassword('tok', { oldPassword: 'x', newPassword: 'yyyyyy' }),
     ).rejects.toMatchObject({ status: 400, message: '旧密码不正确' })
+  })
+})
+
+describe('fetchProfile', () => {
+  it('GET /api/users/me with bearer returns profile', async () => {
+    const profile = {
+      username: 'demo',
+      nickname: null,
+      email: null,
+      createdAt: '2026-09-27T12:00:00Z',
+    }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => profile }))
+
+    await expect(fetchProfile('tok')).resolves.toEqual(profile)
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/users/me',
+      expect.objectContaining({ method: 'GET', headers: { Authorization: 'Bearer tok' } }),
+    )
+  })
+
+  it('unauthorized throws ApiError 401', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: async () => ({ code: 'UNAUTHORIZED', message: '需要登录' }),
+      }),
+    )
+    await expect(fetchProfile('bad')).rejects.toMatchObject({ status: 401, message: '需要登录' })
+  })
+})
+
+describe('updateProfile', () => {
+  it('PUT JSON body with bearer returns updated profile', async () => {
+    const updated = {
+      username: 'demo',
+      nickname: '小明',
+      email: 'demo@example.com',
+      createdAt: '2026-09-27T12:00:00Z',
+    }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => updated }))
+
+    await expect(
+      updateProfile('tok', { nickname: '小明', email: 'demo@example.com' }),
+    ).resolves.toEqual(updated)
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/users/me',
+      expect.objectContaining({
+        method: 'PUT',
+        headers: { Authorization: 'Bearer tok', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname: '小明', email: 'demo@example.com' }),
+      }),
+    )
+  })
+
+  it('409 surfaces ApiError with fieldErrors', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: async () => ({
+          code: '409 CONFLICT',
+          message: '该邮箱已被使用',
+          fieldErrors: { email: '该邮箱已被使用' },
+        }),
+      }),
+    )
+    await expect(updateProfile('tok', { email: 'taken@example.com' })).rejects.toMatchObject({
+      status: 409,
+      message: '该邮箱已被使用',
+      fieldErrors: { email: '该邮箱已被使用' },
+    })
   })
 })

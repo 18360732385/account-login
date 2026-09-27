@@ -6,6 +6,7 @@ import App from './App'
 afterEach(() => {
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
+  window.history.replaceState(null, '', '/')
 })
 
 function mockFetchSequence(
@@ -240,5 +241,90 @@ describe('App register flow', () => {
     await user.click(screen.getByRole('button', { name: '注册' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent('密码至少 6 位')
+  })
+})
+
+const tokenOk = async () => ({
+  ok: true,
+  json: async () => ({
+    accessToken: 'tokentokentokentokentokenxx',
+    tokenType: 'Bearer',
+    expiresInMs: 3600000,
+  }),
+})
+const meOk = async () => ({
+  ok: true,
+  json: async () => ({ username: 'demo', displayName: 'Demo User' }),
+})
+const profileOk = async (url: string) => {
+  expect(url).toContain('/api/users/me')
+  return {
+    ok: true,
+    json: async () => ({
+      username: 'demo',
+      nickname: '小明',
+      email: 'demo@example.com',
+      createdAt: '2026-09-27T12:00:00Z',
+    }),
+  }
+}
+
+describe('App /profile route', () => {
+  it('navbar 个人资料 entry navigates to /profile and loads profile', async () => {
+    const user = userEvent.setup()
+    mockFetchSequence([tokenOk, meOk, profileOk])
+
+    render(<App />)
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+    await loginAsDemo(user)
+
+    await user.click(screen.getByRole('link', { name: '个人资料' }))
+    expect(window.location.pathname).toBe('/profile')
+    expect(await screen.findByTestId('profile-username')).toHaveTextContent('demo')
+    expect(screen.getByLabelText('昵称')).toHaveValue('小明')
+    expect(screen.getByRole('link', { name: '个人资料' })).toHaveAttribute('aria-current', 'page')
+
+    await user.click(screen.getByRole('link', { name: '首页' }))
+    expect(window.location.pathname).toBe('/')
+    expect(screen.getByTestId('me-username')).toHaveTextContent('demo')
+  })
+
+  it('unauthenticated /profile redirects to /login, then returns after login', async () => {
+    const user = userEvent.setup()
+    window.history.replaceState(null, '', '/profile')
+    mockFetchSequence([tokenOk, meOk, profileOk])
+
+    render(<App />)
+    await waitFor(() => expect(window.location.pathname).toBe('/login'))
+    expect(screen.getByRole('button', { name: '登录' })).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('用户名'), 'demo')
+    await user.type(screen.getByLabelText('密码'), 'demo123')
+    await user.click(screen.getByRole('button', { name: '登录' }))
+
+    expect(await screen.findByTestId('profile-username')).toHaveTextContent('demo')
+    expect(window.location.pathname).toBe('/profile')
+  })
+
+  it('profile 401 clears session and redirects to login page', async () => {
+    const user = userEvent.setup()
+    mockFetchSequence([
+      tokenOk,
+      meOk,
+      async () => ({
+        ok: false,
+        status: 401,
+        json: async () => ({ code: 'UNAUTHORIZED', message: '需要登录' }),
+      }),
+    ])
+
+    render(<App />)
+    await loginAsDemo(user)
+    await user.click(screen.getByRole('link', { name: '个人资料' }))
+
+    expect(await screen.findByTestId('info-banner')).toHaveTextContent('登录已失效，请重新登录')
+    expect(window.location.pathname).toBe('/login')
+    expect(screen.getByRole('button', { name: '登录' })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
   })
 })

@@ -22,6 +22,7 @@
 | 模块 | 真相路径 | 基础路径 | 接口数 |
 |---|---|---|---|
 | 认证与账号 | [`modules/01-account-login-auth.md`](./modules/01-account-login-auth.md) | `/api/auth/*`、`/api/me` | 5 |
+| 用户资料 | [`modules/02-account-login-user.md`](./modules/02-account-login-user.md) | `/api/users/me` | 2 |
 
 ## 全局约定
 
@@ -29,7 +30,7 @@
 |---|---|
 | 鉴权 Header | `Authorization: Bearer <accessToken>`；公开端点仅 `POST /api/auth/login`、`POST /api/auth/register` |
 | 统一响应 | 无外壳，成功直接返回 DTO（HTTP 200） |
-| 错误体 | `{ "code": string, "message": string }`（`ErrorResponse`）；`code` 形如 `409 CONFLICT` / `BAD_REQUEST` / `UNAUTHORIZED` |
+| 错误体 | `{ "code": string, "message": string, "fieldErrors"?: { [字段]: string } }`（`ErrorResponse`）；`code` 形如 `409 CONFLICT` / `BAD_REQUEST` / `UNAUTHORIZED`；`fieldErrors` 仅字段校验失败 / 字段冲突时出现 |
 | 前端消费 | `frontend/src/api/client.ts` + `types.ts`（改契约须同步） |
 
 ### 字段表约定（模块真相强制）
@@ -43,3 +44,4 @@
 |---|---|---|---|---|
 | v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | 2026-09-27 |
 | v0.2 | 修改 | 登记 01-account-login-auth（5 接口）与全局约定 | 张健 | 2026-09-27 |
+| v0.3 | 修改 | 登记 02-account-login-user（2 接口）；错误体全局约定补 `fieldErrors` | 张健 | 2026-09-27 |
