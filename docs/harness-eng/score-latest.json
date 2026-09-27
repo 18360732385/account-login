@@ -1,0 +1,327 @@
+{
+  "ok": true,
+  "root": "/workspace/account-login",
+  "modules": [],
+  "scored_domains": [
+    "func",
+    "api"
+  ],
+  "threshold": 80,
+  "formula_ceiling": 100,
+  "domain_caps": {
+    "func": 100,
+    "api": 100
+  },
+  "morph_scale": "0.7",
+  "domains": {
+    "func": {
+      "score": 100,
+      "index": true,
+      "truths": 1,
+      "truths_unfiltered": 1,
+      "module_filter_empty": false,
+      "shells": 0,
+      "miss": {},
+      "template_completeness": 100,
+      "files": [
+        {
+          "path": "docs/func/modules/01-account-login-backend.md",
+          "score": 100,
+          "probe_score": 75,
+          "depth_score": 25,
+          "depth_parts": {
+            "method_desc": 10,
+            "links": 8,
+            "evidence": 7
+          },
+          "issues": [],
+          "checks": [
+            {
+              "id": "has-service-list",
+              "ok": true
+            },
+            {
+              "id": "has-method-list",
+              "ok": true
+            },
+            {
+              "id": "no-todo",
+              "ok": true
+            },
+            {
+              "id": "req-service",
+              "ok": true
+            },
+            {
+              "id": "req-methods",
+              "ok": true
+            },
+            {
+              "id": "req-links",
+              "ok": true
+            },
+            {
+              "id": "dens-method-desc",
+              "ok": true
+            },
+            {
+              "id": "missing-req-section",
+              "ok": true
+            }
+          ],
+          "shell": false,
+          "template_completeness": 100
+        }
+      ]
+    },
+    "api": {
+      "score": 100,
+      "index": true,
+      "truths": 1,
+      "truths_unfiltered": 1,
+      "module_filter_empty": false,
+      "shells": 0,
+      "miss": {},
+      "template_completeness": 100,
+      "files": [
+        {
+          "path": "docs/api/modules/01-account-login-auth.md",
+          "score": 100,
+          "probe_score": 75,
+          "depth_score": 25,
+          "depth_parts": {
+            "evidence": 6,
+            "logic": 7,
+            "examples": 7,
+            "non_echo": 5
+          },
+          "issues": [],
+          "checks": [
+            {
+              "id": "has-api-path",
+              "ok": true
+            },
+            {
+              "id": "has-http-method",
+              "ok": true
+            },
+            {
+              "id": "has-request-params",
+              "ok": true
+            },
+            {
+              "id": "no-todo",
+              "ok": true
+            },
+            {
+              "id": "req-desc",
+              "ok": true
+            },
+            {
+              "id": "req-path",
+              "ok": true
+            },
+            {
+              "id": "req-method",
+              "ok": true
+            },
+            {
+              "id": "req-evidence",
+              "ok": true
+            },
+            {
+              "id": "req-logic",
+              "ok": true
+            },
+            {
+              "id": "req-params",
+              "ok": true
+            },
+            {
+              "id": "req-response",
+              "ok": true
+            },
+            {
+              "id": "dens-examples",
+              "ok": true
+            },
+            {
+              "id": "missing-req-section",
+              "ok": true
+            }
+          ],
+          "shell": false,
+          "endpoints": 5,
+          "template_completeness": 100
+        }
+      ]
+    }
+  },
+  "gaps": [],
+  "quality": {
+    "overall": 100,
+    "domains": {
+      "func": 100,
+      "api": 100
+    }
+  },
+  "coverage": {
+    "covered": 5,
+    "code": 5,
+    "ratio": 1,
+    "percent": 100
+  },
+  "next_shards": [
+    {
+      "id": "shard-01",
+      "package": "(root)",
+      "count": 5,
+      "endpoints": [
+        "ep-0001",
+        "ep-0002",
+        "ep-0003",
+        "ep-0004",
+        "ep-0005"
+      ]
+    }
+  ],
+  "diff": null,
+  "suggest_next": "开干=YES（ai_coding_ready）；可开始 AI 改业务，仍须人工审契约与代码",
+  "suggest_upgrade": {
+    "next_ladder": null,
+    "skill_patch": "0.2.16",
+    "reason": "ready 且贴近公式上限；可升阶或人工精修，勿空追 overall"
+  },
+  "miss_histogram": {},
+  "template_completeness": {
+    "overall": 100,
+    "by_domain": {
+      "func": 100,
+      "api": 100
+    }
+  },
+  "filter_notes": [],
+  "overall": 100,
+  "coverage_by_domain": {
+    "api": {
+      "covered": 5,
+      "code": 5,
+      "ratio": 1,
+      "percent": 100
+    },
+    "func": {
+      "covered": 1,
+      "code": 1,
+      "ratio": 1,
+      "percent": 100,
+      "unit": "modules"
+    }
+  },
+  "ready": {
+    "ok": true,
+    "deprecated": true,
+    "quality_ok": true,
+    "coverage_ok": true,
+    "coverage_incomplete": false,
+    "rule": "deprecated 0.7.0; quality>=80 && coverage>=0.8 (see ai_coding_ready)",
+    "ready_quality": 80,
+    "ready_coverage": 0.8
+  },
+  "gold_ratio": 1,
+  "acceptance": {
+    "blockers": 0,
+    "warnings": 0,
+    "status": 0
+  },
+  "warning_shards": [],
+  "blocker_shards": [],
+  "draft_vs_ssot": "SSOT 须过 acceptance；heuristic draft 仅 .fill-work（见 truth-quality.md）",
+  "skeleton_ready": {
+    "ok": true,
+    "ladder": "L5",
+    "files_ok": 4,
+    "l4_files": 2,
+    "ladder_ok": true
+  },
+  "coverage_ready": {
+    "ok": true,
+    "coverage_incomplete": false,
+    "mode": "all_domains",
+    "targets": {
+      "func": 0.8,
+      "api": 0.8
+    },
+    "gaps": [],
+    "effective_ratio": 1
+  },
+  "score_policy": {
+    "present": true,
+    "path": "docs/harness-eng/score-policy.yaml",
+    "coverage_mode": "all_domains",
+    "coverage_targets": {
+      "api": 0.8,
+      "func": 0.8,
+      "db": 0.8,
+      "redis": 0.8,
+      "jobs": 0.8
+    },
+    "density": {
+      "api_example_min_ratio": 0.9,
+      "db_comment_min_ratio": 0.5,
+      "func_method_desc_min_ratio": 0.7,
+      "redis_ttl_required": true,
+      "redis_example_required": true
+    },
+    "gate_profile": "strict",
+    "gate": {
+      "morph_floor": 75,
+      "template_completeness_min": null,
+      "forbid_harness_todo": true,
+      "todo_scan": "truths",
+      "gold_ratio_min": null,
+      "acceptance_blockers_max": 0,
+      "acceptance_warnings_max": null,
+      "require_no_lagging_domain": false
+    }
+  },
+  "semantic_ready": {
+    "ok": true,
+    "generic_logic_template": 0,
+    "dto_unbound": 0,
+    "api_files_scanned": 2,
+    "rule": "strict: generic_logic<=3 && dto_unbound<=2 && template_completeness>=70"
+  },
+  "fill_plan": {
+    "present": true,
+    "open_total": 0,
+    "all_closed": true,
+    "batch_count": 2,
+    "counts": {
+      "open": 0,
+      "in_progress": 0,
+      "closed": 2,
+      "blocked": 0
+    }
+  },
+  "ai_coding_ready": {
+    "ok": true,
+    "rule": "skeleton_ready && coverage_ready && semantic_ready && fill_plan.all_closed && gate(strict)",
+    "blockers": [],
+    "gate": {
+      "active": true,
+      "ok": true,
+      "blockers": [],
+      "checks": {
+        "gate_profile": "strict",
+        "morph_floor_ok": true,
+        "template_completeness_ok": null,
+        "no_harness_todo": true,
+        "gold_ok": true,
+        "warnings_ok": null,
+        "todo_scan": "truths",
+        "harness_todo_count": 0
+      }
+    }
+  },
+  "pass": true
+}

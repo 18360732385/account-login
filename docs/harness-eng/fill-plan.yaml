@@ -1,0 +1,28 @@
+version: "0.2.19"
+goal: "契约达到 ai_coding_ready（语义验收 + 批次关闭）"
+domains: ["api", "func"]
+done_when:
+  - skeleton_ready
+  - coverage_ready
+  - semantic_ready
+  - plan_batches_closed
+batches:
+  - id: "api-01-core"
+    domain: api
+    modules: []
+    status: closed
+    tier: standard
+    sample_n: null
+    acceptance:
+      - "每接口有 evidence path#method"
+      - "请求参数类型 ∈ 本接口请求体/签名声明"
+      - "功能逻辑非通用四步模板"
+  - id: "func-01-core"
+    domain: func
+    modules: []
+    status: closed
+    tier: standard
+    sample_n: null
+    acceptance:
+      - "方法说明含业务语义"
+      - "禁止无 sample_n 的前N结案"
