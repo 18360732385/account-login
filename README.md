@@ -60,6 +60,8 @@ cd frontend && npm test && npm run build
 
 ## 文档
 
+- AI 协作入口：`AGENTS.md`（分册 `backend/AGENTS.md`、`frontend/AGENTS.md`）；契约真相：`docs/func/`、`docs/api/`
+- harness-eng 施工产物：`docs/harness-eng/`（开干报告 `report-latest.html`）；宿主配置 SSOT：`docs/agent-config/`
 - 需求：`docs/requirements/`
 - feature-eng：`docs/runs/`
 - Spec / Plan：`docs/superpowers/`

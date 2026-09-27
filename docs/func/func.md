@@ -16,16 +16,17 @@
 |---|---|
 | 项目名称 | account-login |
 | 项目描述 | 账号登录全栈示例：Spring Boot 3 JWT API（backend/）+ Vite React TS UI（frontend/） |
-| 技术栈 | TODO(harness-eng) |
+| 技术栈 | 后端 Spring Boot 3.3.4 · Java 17 · Maven（`backend/pom.xml` 独立）· Spring Security · jjwt 0.12；前端 Vite 8 · React 19 · TS 6 · Vitest |
 
 ## 模块文档
 
 | 模块 | 真相路径 | 代码目录 | 说明 |
 |---|---|---|---|
-| （待补充） | — | — | 新增域时按 `templates/func-template.md` 建 `NN-*.md` 并登记本表 |
+| 认证与账号（backend） | [`modules/01-account-login-backend.md`](./modules/01-account-login-backend.md) | `backend/src/main/java/com/example/accountlogin/` | AuthService / DemoUserStore / TokenDenylist / JwtService / DemoUser |
 
 ## 变更记录（索引级）
 
 | 版本 | 类型 | 内容 | 操作人 | 更新时间 |
 |---|---|---|---|---|
-| v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | TODO |
+| v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | 2026-09-27 |
+| v0.2 | 修改 | 登记 01-account-login-backend 模块真相 | 张健 | 2026-09-27 |

@@ -15,17 +15,22 @@
 | 项 | 说明 |
 |---|---|
 | 服务名 | account-login |
-| 统一前缀 | TODO(harness-eng) |
+| 统一前缀 | `/api`（后端 :8080；前端开发经 Vite 代理） |
 
 ## 模块文档
 
 | 模块 | 真相路径 | 基础路径 | 接口数 |
 |---|---|---|---|
-| （待补充） | — | — | — |
+| 认证与账号 | [`modules/01-account-login-auth.md`](./modules/01-account-login-auth.md) | `/api/auth/*`、`/api/me` | 5 |
 
 ## 全局约定
 
-TODO(harness-eng): 鉴权 Header、统一响应、错误码等。
+| 项 | 约定 |
+|---|---|
+| 鉴权 Header | `Authorization: Bearer <accessToken>`；公开端点仅 `POST /api/auth/login`、`POST /api/auth/register` |
+| 统一响应 | 无外壳，成功直接返回 DTO（HTTP 200） |
+| 错误体 | `{ "code": string, "message": string }`（`ErrorResponse`）；`code` 形如 `409 CONFLICT` / `BAD_REQUEST` / `UNAUTHORIZED` |
+| 前端消费 | `frontend/src/api/client.ts` + `types.ts`（改契约须同步） |
 
 ### 字段表约定（模块真相强制）
 
@@ -36,4 +41,5 @@ TODO(harness-eng): 鉴权 Header、统一响应、错误码等。
 
 | 版本 | 类型 | 内容 | 操作人 | 更新时间 |
 |---|---|---|---|---|
-| v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | TODO |
+| v0.1 | 创建 | harness-eng 初始化索引骨架 | harness-eng | 2026-09-27 |
+| v0.2 | 修改 | 登记 01-account-login-auth（5 接口）与全局约定 | 张健 | 2026-09-27 |

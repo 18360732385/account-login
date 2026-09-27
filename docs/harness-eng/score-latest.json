@@ -185,7 +185,11 @@
       ]
     }
   ],
-  "diff": null,
+  "diff": {
+    "overall": 0,
+    "source": "history",
+    "coverage_percent": 0
+  },
   "suggest_next": "开干=YES（ai_coding_ready）；可开始 AI 改业务，仍须人工审契约与代码",
   "suggest_upgrade": {
     "next_ladder": null,

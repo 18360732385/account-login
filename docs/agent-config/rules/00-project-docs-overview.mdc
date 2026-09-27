@@ -41,10 +41,10 @@ alwaysApply: true
 |---|---|
 | （通用） | 冲突以磁盘最新为准，勿沿用会话早期摘要 |
 | （通用） | 规划语料 / 过期 plan 不是契约 SSOT |
-| （Jobs） | 改 Cron 须四件套：任务码 / Scheduler / yml / Registry + `docs/jobs` |
-| （日志/注释） | 改 Java/yml：Service/Tool/Infra 打步骤日志 + 增量中文注释；`catch`/硬失败须 Throwable 最后一参（若装 rule `21`） |
-
-TODO(harness-eng): 将本仓稳定高频翻车压缩为 3～7 行薄片，回链 pitfalls `Pn`。
+| P1 | 后端非多模块：`mvn -f backend …`，勿 `-pl backend -am` |
+| P2 | 改密/注册测试须恢复内存账号（`resetCredentials` / `removeIfPresent`） |
+| P3 | 宿主配置改 `docs/agent-config/` 后跑 `sync.mjs`；生成物勿手改 |
+| P4 | REST 变更三处同步：后端 DTO/Controller · `docs/api` 真相 · `frontend/src/api` |
 
 ## 提交门禁
 

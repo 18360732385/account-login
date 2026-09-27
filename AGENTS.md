@@ -9,23 +9,38 @@
 
 ## Critical
 
-TODO(harness-eng): 写明本仓最易踩的构建/运行命令红线（例：必须在仓库根执行某工具）。
+- **后端不是 Maven 多模块**：仓库根**没有** `pom.xml`；后端命令一律 `mvn -f backend …`（或 `cd backend && mvn …`），**勿**用 `mvn -pl backend -am`（分册模板默认写法不适用本仓）→ P1
+- 前端命令在 `frontend/` 下执行（`npm --prefix frontend …` 亦可）；Node ≥ 20
+- 改 `docs/agent-config/**` 后必须 `node scripts/agent-config/sync.mjs` 并提交生成物；`.cursor/` `.codex/` `.agents/` 为生成物勿手改 → P3
+- 用户与 token 吊销名单均为**内存**实现：重启即丢；集成测试改密后须 `resetCredentials` 恢复预置账号 → P2
 
 ## Commands
 
 | Task | Command |
 |---|---|
-| TODO | TODO(harness-eng): 填真实命令 |
+| 后端测试 | `mvn -q -f backend test` |
+| 后端启动（:8080） | `mvn -f backend spring-boot:run` |
+| 前端安装 | `npm --prefix frontend ci` |
+| 前端测试 | `npm --prefix frontend test`（vitest run） |
+| 前端构建 / 类型检查 | `npm --prefix frontend run build`（`tsc -b && vite build`） |
+| 前端 lint | `npm --prefix frontend run lint`（oxlint） |
+| 前端开发（:5173，代理 `/api`→:8080） | `npm --prefix frontend run dev` |
+| 宿主配置同步 / 漂移校验 | `node scripts/agent-config/sync.mjs` / `node scripts/agent-config/sync.mjs --check` |
+| 踩坑台账 lint | `node scripts/agent-kb/lint-pitfalls.mjs` |
 
 ## Repo structure
 
 ```text
 account-login/
-├── backend, frontend          # 见分册 AGENTS
-├── docs/func|api|db|redis|jobs/  # 契约：索引 + 真相（按已启用域）
+├── backend/                 # Spring Boot 3 JWT API（独立 pom）→ backend/AGENTS.md
+├── frontend/                # Vite + React 19 + TS SPA → frontend/AGENTS.md
+├── docs/func|api/           # 契约：索引 + 真相（本仓启用 func、api；无 db/redis/jobs）
 ├── docs/agent-kb/           # architecture / pitfalls / accepted-gaps
-├── docs/releases/           # 发版过程域（非契约 SSOT；若启用）
-└── docs/superpowers/        # 规划语料（非 SSOT；若启用 L3）
+├── docs/agent-config/       # L5 宿主配置 SSOT（rules/hooks/mcp/skills）→ sync 生成 .cursor/.codex/.agents
+├── docs/harness-eng/        # harness-eng 施工产物（meta / score-policy / fill-plan / 报告；非契约）
+├── docs/requirements/       # 需求原文（非契约 SSOT）
+├── docs/runs/               # feature-eng 过程态（非契约 SSOT）
+└── docs/superpowers/        # 规划语料（非 SSOT）
 ```
 
 ## 给智能体的文档优先级
@@ -54,9 +69,13 @@ account-login/
 
 > 红线**一句话**写在此；现象 / 排障细节以 [pitfalls](docs/agent-kb/pitfalls.md) 对应 `Pn` 为正文，**勿在两处各写细节**。格式：`一句话 → Pn`。
 
-- Commit API keys、生产密码、含密配置
-- 勿手改各宿主生成物（`.cursor/` / `.claude/` / `.trae/` 等 rules·hooks·mcp）；SSOT 为 `docs/agent-config/`（若 L5）→ 改后跑 sync
-- TODO(harness-eng): 追加本仓域红线（鉴权、迁移、SSOT 边界等）— 格式：`一句话 → Pn`；**勿抄他仓业务条**
+- Commit API keys、生产密码、含密配置 → P5
+- 勿手改各宿主生成物（`.cursor/` / `.claude/` / `.trae/` 等 rules·hooks·mcp）；SSOT 为 `docs/agent-config/`（若 L5），改后跑 sync → P3
+- 用 `mvn -pl backend -am` 或在仓库根直接 `mvn`（根无 pom）→ P1
+- 集成测试改共享预置账号（demo/admin）密码后不恢复 → P2
+- 手改 `.cursor/` `.codex/` `.agents/` 生成物而不改 `docs/agent-config/` → P3
+- 改后端 REST（路径 / DTO / 错误码）却不同步 `docs/api/modules/01-account-login-auth.md` 与 `frontend/src/api/{client,types}.ts` → P4
+- 把 `application.yml` 的演示 JWT 密钥当生产密钥或在日志中输出 token → P5
 
 ## Rules 索引
 

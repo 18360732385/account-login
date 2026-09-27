@@ -10,23 +10,31 @@
 
 | 将要触碰的路径 / 关键词 | 相关坑 |
 |---|---|
-| `db/migration`、`*.sql` | P1 |
-| `docs/api`、`controller`、`packages/api-client`、`packages/types`、`packages/queries` | （待补） |
-| `docs/superpowers`、交付收口 | （待补） |
-| `docs/agent-config`、`scripts/agent-config`、各宿主生成物 | （待补） |
-| （按本仓实际补充：一行一路径族，只列 `Pn`） | |
+| `mvn`、`backend/pom.xml`、`-pl`、`-am` | P1 |
+| `AuthApiIntegrationTest`、`DemoUserStore`、`resetCredentials` | P2 |
+| `docs/agent-config`、`scripts/agent-config`、`.cursor/`、`.codex/`、`.agents/` | P3 |
+| `docs/api`、`controller`、`dto/`、`frontend/src/api/client.ts`、`frontend/src/api/types.ts` | P4 |
+| `application.yml`、`app.jwt.secret`、`.env`、`accessToken` | P5 |
 
 ## 域速查
 
 | 域 | 坑 |
 |---|---|
 | Build | P1 |
+| Test | P2 |
+| Config | P3、P5 |
+| API | P4 |
+| Auth | P5 |
 
 ## 台账（活跃）
 
 | ID | 状态 | 域 | 触发路径/关键词 | 现象 | 错误做法 | 正确约束落点 |
 |---|---|---|---|---|---|---|
-| P1 | 活跃 | Build | `mvn`、`gradle`、构建命令 | 示例：在错误目录执行构建导致依赖解析失败 | 示例：在子模块目录直接构建 | [agent-kb README](README.md) |
+| P1 | 活跃 | Build | `mvn`、`-pl backend -am`、`backend/pom.xml` | 仓库根执行 `mvn -pl backend -am test` 报 “no POM in this directory” | 套用多模块 Maven 写法（harness spring 分册模板默认） | [根 AGENTS Commands](../../AGENTS.md) · [backend/AGENTS.md](../../backend/AGENTS.md) |
+| P2 | 活跃 | Test | `AuthApiIntegrationTest`、`DemoUserStore`、`resetCredentials` | 改密用例后 demo/admin 密码被改，后续用例登录 401 | 集成测试改共享内存账号后不在 `@AfterEach` 恢复 | [backend/AGENTS.md](../../backend/AGENTS.md) · [func 真相](../func/modules/01-account-login-backend.md) |
+| P3 | 活跃 | Config | `.cursor/`、`.codex/`、`.agents/`、`docs/agent-config` | 手改生成物后 `sync.mjs --check` 报漂移 / 下次 sync 被覆盖 | 直接编辑 `.cursor/rules/*.mdc` 等生成物 | [docs/agent-config/README.md](../agent-config/README.md) |
+| P4 | 活跃 | API | `controller`、`dto/`、`docs/api`、`frontend/src/api` | 前端 `types.ts` 字段与后端 record 不一致导致页面空值 / 错误文案不符 | 只改一端或不更新 api 真相 | [api 真相](../api/modules/01-account-login-auth.md) · [frontend/AGENTS.md](../../frontend/AGENTS.md) |
+| P5 | 活跃 | Auth | `app.jwt.secret`、`accessToken`、`.env` | 演示密钥进入生产配置 / token 出现在日志 | 硬编码或打印密钥与 token | [backend/AGENTS.md](../../backend/AGENTS.md) |
 
 ## 已根治留档
 
